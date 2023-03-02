@@ -1,5 +1,7 @@
 package partA;
 
+import java.text.NumberFormat;
+
 public class Rational {
 
     private int numerator;
@@ -52,8 +54,15 @@ public class Rational {
         else return greatestCommonFactor(den, num % den);
     }
 
+    @Override
     public String toString() {
         if (denominator == 1) return numerator + "";
         else return numerator + "/" + denominator;
+    }
+
+    public String floatingString(int maxPrecisionDigits){
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(maxPrecisionDigits);
+        return nf.format((double) numerator / denominator);
     }
 }
