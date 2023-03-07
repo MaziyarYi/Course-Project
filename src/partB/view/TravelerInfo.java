@@ -1,65 +1,173 @@
-/*
- * Created by JFormDesigner on Fri Mar 03 22:48:20 IRST 2023
- */
-
 package partB.view;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.Objects;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.Objects;
 
-/**
- * @author PC
- */
-public class TravelerInfo extends JFrame {
+public class TravelerInfo extends JFrame implements ActionListener {
 
-    public TravelerInfo() {
-        this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        initComponents();
+    private Container c;
+    private JLabel name;
+    private JTextField tname;
+    private JLabel city;
+    private JComboBox<String> jCity;
+    private JLabel email;
+    private JTextField temail;
+    private JLabel mno;
+    private JTextField tmno;
+    private JLabel occupation;
+    private JComboBox<String> jOccupation;
+    private JButton sub;
+    private JButton search;
+    private JButton close;
+
+    private String occupationList[] = { "Engineer" , "Teacher"};
+    private String cityList[] = { "London" , "Washington"};
+
+    public TravelerInfo()
+    {
+        setTitle("Registration Form");
+        setBounds(300, 90, 900, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
+
+        c = getContentPane();
+        c.setLayout(null);
+
+        name = new JLabel("Traveler's Name");
+        name.setFont(new Font("Arial", Font.PLAIN, 20));
+        name.setSize(200, 20);
+        name.setLocation(100, 100);
+        c.add(name);
+
+        tname = new JTextField();
+        tname.setFont(new Font("Arial", Font.PLAIN, 15));
+        tname.setSize(190, 20);
+        tname.setLocation(250, 100);
+        c.add(tname);
+
+        city = new JLabel("City From");
+        city.setFont(new Font("Arial", Font.PLAIN, 20));
+        city.setSize(100, 20);
+        city.setLocation(460, 100);
+        c.add(city);
+
+        jCity = new JComboBox(cityList);
+        jCity.setFont(new Font("Arial", Font.PLAIN, 15));
+        jCity.setSize(150, 20);
+        jCity.setLocation(580, 100);
+        c.add(jCity);
+
+        email = new JLabel("Email ID");
+        email.setFont(new Font("Arial", Font.PLAIN, 20));
+        email.setSize(100, 20);
+        email.setLocation(100, 150);
+        c.add(email);
+
+        temail = new JTextField();
+        temail.setFont(new Font("Arial", Font.PLAIN, 15));
+        temail.setSize(190, 20);
+        temail.setLocation(250, 150);
+        c.add(temail);
+
+        mno = new JLabel("Mobile");
+        mno.setFont(new Font("Arial", Font.PLAIN, 20));
+        mno.setSize(100, 20);
+        mno.setLocation(460, 150);
+        c.add(mno);
+
+        tmno = new JTextField();
+        tmno.setFont(new Font("Arial", Font.PLAIN, 15));
+        tmno.setSize(190, 20);
+        tmno.setLocation(580, 150);
+        c.add(tmno);
+
+        occupation = new JLabel("Occupation");
+        occupation.setFont(new Font("Arial", Font.PLAIN, 20));
+        occupation.setSize(100, 20);
+        occupation.setLocation(100, 250);
+        c.add(occupation);
+
+        jOccupation = new JComboBox(occupationList);
+        jOccupation.setFont(new Font("Arial", Font.PLAIN, 15));
+        jOccupation.setSize(150, 20);
+        jOccupation.setLocation(220, 250);
+        c.add(jOccupation);
+
+        sub = new JButton("Submit");
+        sub.setFont(new Font("Arial", Font.PLAIN, 15));
+        sub.setSize(100, 20);
+        sub.setLocation(300, 320);
+        sub.addActionListener(this);
+        c.add(sub);
+
+        search = new JButton("Search");
+        search.setFont(new Font("Arial", Font.PLAIN, 15));
+        search.setSize(100, 20);
+        search.setLocation(420, 320);
+        search.addActionListener(this);
+        c.add(search);
+
+        close = new JButton("close");
+        close.setFont(new Font("Arial", Font.PLAIN, 15));
+        close.setSize(100, 20);
+        close.setLocation(540, 320);
+        close.addActionListener(this);
+        c.add(close);
+
+        setVisible(true);
     }
 
-    private void save(ActionEvent e) {
-        //todo
-    }
-
-    private void search(ActionEvent e) {
-        //todo
-    }
-
-    private void close(ActionEvent e) {
-        //todo
-    }
-
-    private void initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        // Generated using JFormDesigner Evaluation license - unknown
-
-        //======== this ========
-        Container contentPane = getContentPane();
-        contentPane.setLayout(null);
-
-        {
-            // compute preferred size
-            Dimension preferredSize = new Dimension();
-            for(int i = 0; i < contentPane.getComponentCount(); i++) {
-                Rectangle bounds = contentPane.getComponent(i).getBounds();
-                preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-                preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-            }
-            Insets insets = contentPane.getInsets();
-            preferredSize.width += insets.right;
-            preferredSize.height += insets.bottom;
-            contentPane.setMinimumSize(preferredSize);
-            contentPane.setPreferredSize(preferredSize);
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == sub) {
+            String info = String.join("\n" , tname.getText(), temail.getText(), Objects.requireNonNull(jOccupation.getSelectedItem()).toString(),
+                    Objects.requireNonNull(jCity.getSelectedItem()).toString(), tmno.getText(), "\n");
+            appendStrToFile(info);
+            new PopUp("info successfully saved!!");
         }
-        pack();
-        setLocationRelativeTo(getOwner());
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
+
+        else if (e.getSource() == search) {
+            boolean found = false;
+            BufferedReader reader;
+
+            try {
+                reader = new BufferedReader(new FileReader("src/partB/travelerInfo.txt"));
+                String line = reader.readLine();
+
+                while (line != null) {
+                    if (!tmno.getText().equals("") && !line.equals("\n") && line.trim().equals(tmno.getText()))
+                        found = true;
+                    line = reader.readLine();
+                }
+                reader.close();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+            if (found){
+                new PopUp("found traveler " + tmno.getText() + " in the file");
+            }else {
+                new PopUp("Traveler is not found!!");
+            }
+        }
+
+        else if (e.getSource() == close) {
+            this.dispose();
+        }
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    // Generated using JFormDesigner Evaluation license - unknown
-    // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
+    public void appendStrToFile(String str) {
+        try {
+            File file = new File("src/partB/travelerInfo.txt");
+            file.createNewFile();
+            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
+            out.write(str);
+            out.close();
+        } catch (IOException e) {
+            System.out.println("exception occurred" + e);
+        }
+    }
 }
